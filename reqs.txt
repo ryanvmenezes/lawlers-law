@@ -1,0 +1,7 @@
+jupyter
+pandas
+requests
+requests-cache
+nba_api
+django
+tqdm
