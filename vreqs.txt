@@ -1,9 +1,12 @@
+altair==2.2.2
 backports-abc==0.5
+backports.functools-lru-cache==1.5
 backports.shutil-get-terminal-size==1.0.0
 bleach==3.0.2
 certifi==2018.10.15
 chardet==3.0.4
 configparser==3.5.0
+cycler==0.10.0
 decorator==4.3.0
 defusedxml==0.5.0
 Django==1.11.16
@@ -23,7 +26,9 @@ jupyter==1.0.0
 jupyter-client==5.2.3
 jupyter-console==5.2.0
 jupyter-core==4.4.0
+kiwisolver==1.0.1
 MarkupSafe==1.1.0
+matplotlib==2.2.3
 mistune==0.8.4
 nba-api==1.0.6
 nbconvert==5.4.0
@@ -39,6 +44,7 @@ prometheus-client==0.4.2
 prompt-toolkit==1.0.15
 ptyprocess==0.6.0
 Pygments==2.3.0
+pyparsing==2.3.0
 python-dateutil==2.7.5
 pytz==2018.7
 pyzmq==17.1.2
@@ -50,11 +56,14 @@ Send2Trash==1.5.0
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
 six==1.11.0
+subprocess32==3.5.3
 terminado==0.8.1
 testpath==0.4.2
+toolz==0.9.0
 tornado==5.1.1
 tqdm==4.28.1
 traitlets==4.3.2
+typing==3.6.6
 urllib3==1.24.1
 wcwidth==0.1.7
 webencodings==0.5.1

@@ -5,3 +5,8 @@ requests-cache
 nba_api
 django
 tqdm
+matplotlib
+altair
+vega_datasets
+notebook
+vega
