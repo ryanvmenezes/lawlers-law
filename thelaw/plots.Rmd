@@ -1,0 +1,40 @@
+---
+title: "plots"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+data = read_csv('time-to-100.csv')
+```
+
+```{r, fig.height=10, fig.width=8}
+data %>% 
+  ggplot(aes(timeto100, year)) +
+  geom_point() +
+  ggtitle("NBA games are hitting the 100-point mark earlier and earlier") +
+  # xlab("Time at which a team hits 100") +
+  # scale_x_continuous(
+    # breaks = c(0, 720),
+    # minor_breaks = waiver()
+  # ) +
+  scale_x_reverse(
+    name = "Time at which the first team hits 100 points",
+    breaks = rev(0:8*60),
+    limits = c(8*60,0),
+    labels = c('8 minutes\nleft in game','7 min.','6 min.','5 min.','4 min.','3 min.','2 min.','1 min.','End of game'),
+    minor_breaks = NULL
+  ) +
+  scale_y_reverse(
+    name = "Season",
+    breaks = 2019:1997,
+    limits = c(2019,1997),
+    labels = 2019:1997,
+    minor_breaks = NULL
+  ) +
+  theme_minimal()
+```
+

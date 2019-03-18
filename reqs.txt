@@ -10,3 +10,4 @@ altair
 vega_datasets
 notebook
 vega
+scipy
