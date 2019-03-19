@@ -16,11 +16,6 @@ data %>%
   ggplot(aes(timeto100, year)) +
   geom_point() +
   ggtitle("NBA games are hitting the 100-point mark earlier and earlier") +
-  # xlab("Time at which a team hits 100") +
-  # scale_x_continuous(
-    # breaks = c(0, 720),
-    # minor_breaks = waiver()
-  # ) +
   scale_x_reverse(
     name = "Time at which the first team hits 100 points",
     breaks = rev(0:8*60),
