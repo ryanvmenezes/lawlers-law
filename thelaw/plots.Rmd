@@ -5,6 +5,7 @@ output: html_notebook
 
 ```{r}
 library(tidyverse)
+library(readxl)
 ```
 
 ```{r}
@@ -31,5 +32,70 @@ data %>%
     minor_breaks = NULL
   ) +
   theme_minimal()
+```
+
+```{r}
+trends = read_csv('law-by-year.csv')
+```
+
+```{r}
+p1 = trends %>% 
+  ggplot(aes(year, pct_games_invoked * 100)) +
+  geom_line() +
+  theme_minimal() +
+  xlab("Season") +
+  ylab("Percent of games where a team hits 100 points") +
+  ggtitle("As more NBA games cross the 100-point barrier ...")
+p1
+```
+
+```{r}
+p2 = trends %>% 
+  ggplot(aes(year, pct_law_correct * 100)) +
+  geom_line() +
+  theme_minimal() +
+  xlab("Season") +
+  ylab("Percent of games Lawler's Law holds true") +
+  ggtitle("... Lawler's Law has become less accurate")
+p2
+```
+```{r fig.width=8, fig.height=10}
+gridExtra::grid.arrange(p1, p2, ncol = 1)
+```
+
+```{r}
+nba = read_csv('nba_stats.csv')
+aba = read_csv('aba_stats.csv')
+```
+
+```{r}
+nbapts = nba %>% 
+  select(szn = Season, pts = PTS) %>% 
+  mutate(szn = as.integer(str_sub(szn, end=4)) + 1)
+```
+
+
+```{r}
+abapts = aba %>% 
+  select(szn = Season, pts = PTS) %>% 
+  mutate(szn = as.integer(str_sub(szn, end=4)) + 1)
+```
+
+```{r}
+nbapts %>% 
+  left_join(abapts, by='szn', suffix = c('_nba','_aba')) %>% 
+  ggplot(aes(szn)) +
+  geom_line(aes(y = pts_nba, color = 'blue')) +
+  geom_line(aes(y = pts_aba, color = 'red')) +
+  # theme_minimal() +
+  scale_color_manual(name = 'League', values = c('blue'='blue','red'='red'), labels = c('NBA','ABA')) +
+  xlab("Season") +
+  ylab("Points per game") +
+  ggtitle("Scoring average by season") +
+  theme_minimal()
+  # geom_hline(yintercept = nbapts %>% filter(szn == 2019) %>% select(pts) %>% first(), color = 'blue')
+```
+```{r}
+
 ```
 
