@@ -1,0 +1,115 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+firsttox = read_csv('point-tables.csv')
+```
+```{r}
+firsttox %>% 
+  ggplot(aes(point, pct_correct, color = year)) +
+  geom_point(alpha = 0.2)
+```
+
+```{r}
+firsttox %>% 
+  ggplot(aes(point, pct_correct)) +
+  geom_point() +
+  stat_smooth(method = 'lm', formula = y ~ x + I(x^2) + I(x^3))
+```
+
+
+
+```{r}
+firsttox %>% 
+  filter(year == 1999 | year == 2019) %>% 
+  ggplot(aes(point, pct_correct, shape = as.factor(year), color = as.factor(year))) +
+  geom_line() +
+  stat_smooth(method = 'lm', formula = y ~ poly(x,3)) + 
+  geom_vline(xintercept = 121) +
+  geom_hline(yintercept = 0.9591612)
+```
+
+```{r}
+firsttox %>% 
+  mutate(pre = (year < 2008)) %>% 
+  group_by(pre, point) %>% 
+  summarise(games = sum(games), correct = sum(correct)) %>% 
+  mutate(pct_correct = correct / games) %>% 
+  ggplot(aes(point, pct_correct, shape = pre)) +
+  geom_point() +
+  stat_smooth(method = 'lm', formula = y ~ x + I(x^2) + I(x^3))
+```
+
+```{r}
+model99 = lm(
+  pct_correct ~ point + I(point^2) + I(point^3),
+  data = firsttox %>% filter(year == 1999)
+)
+```
+
+```{r}
+pred99 = firsttox %>% 
+  filter(year == 1999) %>% 
+  mutate(pred = predict(model99))
+```
+
+```{r}
+pred99
+```
+
+
+```{r}
+pred99 %>% 
+  filter(point == 100)
+```
+
+
+```{r}
+pred99 %>% 
+  select(point, pct_correct, pred) %>% 
+  gather(pred_type, pct, -point) %>% 
+  ggplot(aes(point, pct, color = pred_type)) +
+  geom_point()
+```
+
+
+```{r}
+model19 = lm(
+  pct_correct ~ point + I(point^2) + I(point^3),
+  data = firsttox %>% filter(year == 2019)
+)
+```
+
+```{r}
+pred19 = firsttox %>% 
+  filter(year == 2019) %>% 
+  mutate(pred = predict(model19))
+```
+
+```{r}
+pred19 %>% 
+  select(point, pct_correct, pred) %>% 
+  gather(pred_type, pct, -point) %>% 
+  ggplot(aes(point, pct, color = pred_type)) +
+  geom_point()
+```
+
+```{r}
+pred19 %>% 
+  arrange(point) %>% 
+  filter(point >= 118) %>% 
+  head()
+  filter(pred >= pred99 %>% filter(point == 100) %>% pull(pred)) %>% 
+  slice(1)
+```
+
+```{r}
+summary(model99)
+```
+

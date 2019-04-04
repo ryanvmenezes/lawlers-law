@@ -87,7 +87,6 @@ nbapts %>%
   ggplot(aes(szn)) +
   geom_line(aes(y = pts_nba, color = 'blue')) +
   geom_line(aes(y = pts_aba, color = 'red')) +
-  # theme_minimal() +
   scale_color_manual(name = 'League', values = c('blue'='blue','red'='red'), labels = c('NBA','ABA')) +
   xlab("Season") +
   ylab("Points per game") +
