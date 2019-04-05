@@ -1,8 +1,8 @@
 # Data collection
 
-The code in this folder collects NBA game logs (since 1950) and play-by-play data (since 1997), using two python scripts.
+This folder contains all NBA game logs (since 1950) and play-by-play data (since 1997).
 
-The two folders within this contain all of that data.
+The code that gathered the data is in two python scripts.
 
 ## Game logs
 
