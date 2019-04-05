@@ -1,0 +1,42 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+times = read_csv('point-tables.csv')
+```
+
+```{r}
+times %>% 
+  ggplot(aes(point, pct_correct, color = year)) +
+  geom_point() +
+  stat_smooth(method="lm", formula = y ~ x + I(x^2) + I(x^3))
+```
+
+```{r}
+times %>% 
+  ggplot(aes(point, pct_correct, color = year, shape = as.factor(year))) +
+  stat_smooth(alpha = 0.5, method = "lm", formula = y ~ x + I(x^2) + I(x^3), se = FALSE)
+```
+
+```{r}
+times %>% 
+  filter(year == 1997 | year == 2018) %>% 
+  ggplot(aes(point, pct_correct, color = year, shape = as.factor(year))) +
+  stat_smooth(alpha = 0.5, method = "lm", formula = y ~ x + I(x^2) + I(x^3), se = FALSE)
+```
+
+
+```{r}
+model = lm(pct_correct ~ point + I(point^2) + I(point^3), data = times)
+```
+
+```{r}
+summary(model)
+```
+
+```{r}
+predict(model)
+```
+
