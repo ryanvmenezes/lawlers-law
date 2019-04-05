@@ -1,0 +1,151 @@
+---
+title: "Lawler's Law: Calculations"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+A series of heavy-duty calculations from these data.
+
+### Success rate of Lawler's Law
+
+The simplest calculations pertaining to Lawler's Law.
+
+For the whole league, or a particular team, take the winners and play-by-play summary and answer a few questions for each season:
+
+* How many games were played?
+* How many games saw Lawler's Law invoked (at least one team reached 100)?
+* How many games saw the first team to reach 100 end up winning the game?
+
+```{r}
+firstto100 = function(df) { df %>% filter(POINTS >= 100) %>% slice(1) }
+
+calculate_law = function(y, teamcode = '') {
+  games = suppressMessages(read_csv(str_c('processed/pbp-summary-', y, '.csv')))
+  winners = suppressMessages(read_csv(str_c('processed/winners-', y, '.csv')))
+  
+  if (teamcode != '') {
+    winners = winners %>% filter(str_detect(MATCHUP, teamcode))
+  }
+  
+  law = inner_join(games, winners, by = 'GAME_ID') %>% 
+    arrange(GAME_ID, EVENTNUM) %>% 
+    group_by(GAME_ID) %>% 
+    do(firstto100(.))
+  
+  total_games = nrow(winners)
+  law_invoked = nrow(law)
+  law_correct = nrow(law %>% filter(SIDE == WINNER))
+  
+  tibble(year = y, total_games = total_games, law_invoked = law_invoked, law_correct = law_correct)
+}
+```
+
+```{r}
+years = tibble(year = 1997:2019)
+
+thelaw.nba = years %>% 
+  rowwise() %>% 
+  do(res = calculate_law(.$year)) %>% 
+  rowwise() %>% 
+  do(bind_rows(.)) %>% 
+  mutate(
+    pct_games_invoked = law_invoked / total_games,
+    pct_law_correct = law_correct / law_invoked
+  )
+
+thelaw.lac = years %>% 
+  rowwise() %>% 
+  do(res = calculate_law(.$year, teamcode = 'LAC')) %>% 
+  rowwise() %>% 
+  do(bind_rows(.)) %>% 
+  mutate(
+    pct_games_invoked = law_invoked / total_games,
+    pct_law_correct = law_correct / law_invoked
+  )
+```
+
+```{r}
+thelaw.nba
+```
+
+```{r}
+thelaw.lac
+```
+
+```{r}
+write_csv(thelaw.nba, 'analysis/law-calcs-nba.csv')
+write_csv(thelaw.lac, 'analysis/law-calcs-lac.csv')
+```
+
+### Time at which teams hit 100
+
+How much earlier are teams hitting 100 points in a game?
+
+```{r}
+calculate_timeto100 = function(y) {
+  games = suppressMessages(read_csv(str_c('processed/pbp-summary-', y, '.csv')))
+  timeto100 = games %>% 
+    group_by(GAME_ID) %>% 
+    do(firstto100(.))
+  tibble(year = y, avgtimeto100 = mean(timeto100$TIME))
+}
+```
+
+```{r}
+avgtimeto100 = years %>% 
+  rowwise() %>% 
+  do(calculate_timeto100(.$year)) %>% 
+  rowwise() %>% 
+  do(bind_rows(.))
+```
+
+```{r}
+write_csv(avgtimeto100, 'analysis/time-to-100.csv')
+```
+
+### First to X wins
+
+Find the success rate of "First team to X wins" for all point values of X reached in a given season.
+
+```{r}
+success_at_x = function(p, tbl) {
+  points = tbl %>% filter(POINTS >= p) %>% group_by(GAME_ID) %>% slice(1)
+  games = nrow(points)
+  games_correct = points %>% mutate(correct = (SIDE == WINNER)) %>% pull(correct) %>% sum()
+  pct_correct = games_correct / games
+  tibble(point = p, games = games, correct = games_correct, pct_correct = pct_correct)
+}
+
+# success_at_x(149)
+
+calculate_firsttox = function(y) {
+  games = suppressMessages(read_csv(str_c('processed/pbp-summary-', y, '.csv')))
+  winners = suppressMessages(read_csv(str_c('processed/winners-', y, '.csv')))
+  together = inner_join(games, winners, by = 'GAME_ID') %>% arrange(GAME_ID, EVENTNUM)
+  
+  points_range = tibble(point = min(together$POINTS):max(together$POINTS))
+  
+  points_range %>% 
+    rowwise() %>% 
+    do(success_at_x(.$point, together)) %>% 
+    rowwise() %>% 
+    do(bind_rows(.)) %>% 
+    mutate(year = y) %>% 
+    select(year, point:pct_correct)
+}
+
+# calculate_firsttox(2018)
+
+firsttox = years %>% 
+  rowwise() %>% 
+  do(calculate_firsttox(.$year)) %>% 
+  rowwise() %>% 
+  do(bind_rows(.))
+```
+
+```{r}
+write_csv(avgtimeto100, 'analysis/first-to-x-points.csv')
+```
