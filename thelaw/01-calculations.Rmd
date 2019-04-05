@@ -87,7 +87,7 @@ process = function(fpath) {
 ```
 
 ```{r}
-start = 1997
+start = 2019 # can set back to 1997 to run everything all over again
 end = 2019
 
 for (i in start:end) {

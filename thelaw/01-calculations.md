@@ -5,14 +5,14 @@ Lawler's Law calculations
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.0  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.2       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.3.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -24,8 +24,6 @@ This can be inferred from the game log easily.
 start = 1951
 end = 2019
 
-pb = txtProgressBar(min = start, max = end) 
-
 for (i in start:end) {
   glog = read_csv(
     str_c('../data/logs/log-', i, '.csv'),
@@ -35,21 +33,75 @@ for (i in start:end) {
   final = glog %>% 
     # negative plus-minus means the home team won ...
     mutate(WINNER = case_when(PLUS_MINUS < 0 ~ 'HOME', TRUE ~ 'AWAY')) %>% 
-    # ... but only in games that are listed as where the matchup is "AWAY @ HOME"
+    # ... but only in games where the matchup is listed as "AWAY @ HOME"
     filter(str_detect(MATCHUP, '@')) %>% 
     select(GAME_ID, WINNER, MATCHUP)
   
   write_csv(
-    final,
+final,
     str_c('processed/winners-', i, '.csv')
   )
-  
-  setTxtProgressBar(pb, i)
 }
 ```
-
-    ## ===========================================================================
 
 ### Distill the play-by-play
 
 The play-by-play is long and includes virtually every event in the game. Scoring is the only thing that matters here.
+
+This is a massive amount of munging that plucks out only scoring plays out and reshapes the data into long format.
+
+``` r
+process = function(fpath) {
+  df = read_csv(
+    fpath,
+    col_types = cols(
+      GAME_ID = col_character(),
+      SCOREMARGIN = col_character(),
+      WCTIMESTRING = col_character()
+    )
+  )
+  
+  g = df %>% 
+    drop_na(SCORE) %>% 
+    filter(
+      (!is.na(HOMEDESCRIPTION) | !is.na(VISITORDESCRIPTION))
+    ) %>% 
+    filter(PERIOD <= 4) %>% 
+    arrange(EVENTNUM) %>% 
+    separate(PCTIMESTRING, c("minutes", "seconds", "milliseconds"), sep = ':', remove = FALSE) %>% 
+    mutate(
+      TIME = 2880 - (720)*(as.integer(PERIOD) - 1) - (11 - as.integer(minutes))*(60) - (60 - as.integer(seconds))
+    ) %>% 
+    separate(SCORE, c('AWAY','HOME'), sep = ' - ', remove = FALSE) %>% 
+    replace_na(list(HOMEDESCRIPTION = '', VISITORDESCRIPTION = '')) %>% 
+    mutate(
+      SCORINGTEAM = case_when(
+        HOMEDESCRIPTION != '' ~ 'HOME',
+        VISITORDESCRIPTION != '' ~ 'AWAY',
+        TRUE ~ 'NULL'
+      )
+    ) %>% 
+    mutate(
+      HOMEMARGIN = as.integer(replace(SCOREMARGIN, SCOREMARGIN == 'TIE', 0))
+    ) %>% 
+    select(GAME_ID,EVENTNUM,PERIOD,TIME,SCORINGTEAM,HOMEMARGIN,SCORE,AWAY,HOME) %>% 
+    gather(AWAY, HOME, key = 'SIDE', value = 'POINTS') %>% 
+    arrange(EVENTNUM) %>% 
+    filter(SCORINGTEAM == SIDE)
+  
+  g
+}
+
+# process('../data/playbyplay/2019/0021800002.csv')
+```
+
+``` r
+start = 2019 # can set back to 1997 to run everything all over again
+end = 2019
+
+for (i in start:end) {
+  fpaths = tibble(path = Sys.glob(str_c('../data/playbyplay/', i, '/*.csv')))
+  szn = fpaths %>% rowwise() %>% do(res = process(.$path)) %>% rowwise() %>% do(bind_rows(.)) %>% arrange(GAME_ID, EVENTNUM)
+  write_csv(szn, str_c('processed/pbp-summary-', i, '.csv'))
+}
+```
