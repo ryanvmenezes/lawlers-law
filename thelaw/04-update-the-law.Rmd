@@ -11,6 +11,7 @@ library(RcppRoll)
 ```{r}
 firsttox = read_csv('analysis/first-to-x-points.csv')
 ```
+
 ```{r}
 head(firsttox)
 ```
