@@ -99,11 +99,10 @@ for (y in start:end) {
     do(res = process(.$path)) %>% 
     rowwise() %>% 
     do(bind_rows(.)) %>% 
-    arrange(GAME_ID, EVENTNUM) %>% 
-    mutate(TIME = as.character(TIME)) # sometimes write_csv is writing TIME out in scientific notation??
+    arrange(GAME_ID, EVENTNUM)
+  # %>% mutate(TIME = as.character(TIME)) # sometimes write_csv is writing TIME out in scientific notation??
   
   write_csv(szn, str_c('processed/pbp-summary-', y, '.csv'))
 }
 ```
-
 

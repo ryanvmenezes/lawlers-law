@@ -1,0 +1,150 @@
+---
+title: "Updating Lawler's Law"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+library(RcppRoll)
+```
+
+```{r}
+firsttox = read_csv('analysis/first-to-x-points.csv')
+```
+```{r}
+head(firsttox)
+```
+
+### Shift of the scoring curve over time
+
+```{r}
+firsttox %>% 
+  ggplot(aes(point, pct_correct, color = year)) +
+  geom_point(alpha = 0.2) + 
+  stat_smooth(method = 'lm', formula = y ~ x + I(x^2) + I(x^3))
+```
+
+### Then
+
+Group 1997 to 2001, a five-year period about 20 years ago. Calculate some rolling averages for the percentage chance of a team winning for getting to that point total.
+
+```{r}
+firsttox %>% 
+  filter(year <= 2001) %>% 
+  group_by(point) %>% 
+  summarise(games = sum(games), correct = sum(correct), pct_correct = correct / games) %>% 
+  ggplot(aes(point, pct_correct)) +
+  geom_line()
+```
+
+This trend is a little jumpy. The real trend should be monotonically increasing -- for each increment in the point value, the percentage chance that point total predicts the winner should not be lower than the point total before.
+
+Calculate rolling totals for total games and correct games for a moving average.
+
+```{r}
+firsttox.97.01 = firsttox %>% 
+  filter(year <= 2001) %>% 
+  group_by(point) %>% 
+  summarise(games = sum(games), correct = sum(correct)) %>% 
+  mutate(
+    period = '1997-2001',
+    pct_correct = correct / games,
+    games_roll = roll_sum(games, 5, align = "right", fill = NA),
+    correct_roll = roll_sum(correct, 5, align = "right", fill = NA),
+    pct_correct_roll = correct_roll / games_roll
+  )
+```
+
+What's this trend look like?
+
+```{r}
+firsttox.97.01 %>% 
+  ggplot(aes(point, pct_correct_roll)) +
+  geom_line()
+```
+
+Is the percentage at each point increasing (or the same) based on the previous value?
+
+```{r}
+firsttox.97.01 %>% 
+  select(point, pct = pct_correct_roll) %>% 
+  mutate(prevpct = lag(pct), diff = pct - prevpct, diffpositive = diff >= 0) %>% 
+  filter(!diffpositive)
+```
+
+It is. This is "monotonically increasing."
+
+What was the percentage chance of scoring 100 first and winning during this period?
+
+```{r}
+firsttox.97.01 %>% filter(point == 100)
+```
+
+95.6% across 16,197 games.
+
+### Now
+
+Compare to the most recent five-year period: 2015-2019.
+
+```{r}
+firsttox.15.19 = firsttox %>% 
+  filter(year >= 2015 & year <= 2019) %>% 
+  group_by(point) %>% 
+  summarise(games = sum(games), correct = sum(correct)) %>% 
+  mutate(
+    period = '2015-2019',
+    pct_correct = correct / games,
+    games_roll = roll_sum(games, 5, align = "right", fill = NA),
+    correct_roll = roll_sum(correct, 5, align = "right", fill = NA),
+    pct_correct_roll = correct_roll / games_roll
+  )
+```
+
+Is this one monotonically increasing too?
+
+```{r}
+firsttox.15.19 %>% 
+  ggplot(aes(point, pct_correct_roll)) +
+  geom_line()
+```
+
+```{r}
+firsttox.15.19 %>% 
+  select(point, pct = pct_correct_roll) %>% 
+  mutate(prevpct = lag(pct), diff = pct - prevpct, diffpositive = diff >= 0) %>% 
+  filter(!diffpositive)
+```
+
+Yes.
+
+What's the success rate of 100 here?
+
+```{r}
+firsttox.15.19 %>% filter(point == 100)
+```
+
+90% in 26,475 games. Makes sense: many more games and less success.
+
+### The update
+
+Compare the two monotonically increasing sequences. What was the percentage chance of 100 predicting the winner in the first five-year period? Take that value and find the first point value now that reaches that threshold.
+
+```{r}
+firsttox.15.19 %>% 
+  arrange(point) %>% 
+  filter(pct_correct_roll >= (firsttox.97.01 %>% filter(point == 100) %>% pull(pct_correct_roll))) %>% 
+  slice(1)
+```
+
+The new magic number: 114.
+
+How do the two curves compare?
+
+```{r}
+bind_rows(firsttox.97.01, firsttox.15.19) %>% 
+  select(period, point, pct_correct_roll) %>% 
+  ggplot(aes(point, pct_correct_roll, color = period)) +
+  geom_line() +
+  geom_hline(yintercept = 0.9559178) +
+  geom_vline(xintercept = 114)
+```
