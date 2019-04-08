@@ -24,6 +24,19 @@ thelaw.nba %>%
   ggtitle("Lawler's Law across all NBA games")
 ```
 
+
+```{r}
+thelaw.nba %>% 
+  mutate(pct_law_correct_all = law_correct / total_games) %>% 
+  select(-total_games:-law_correct, -pct_law_correct) %>% 
+  gather(-year, key = 'trend', value = 'percent') %>% 
+  ggplot(aes(year, percent, color = trend)) +
+  geom_line() +
+  theme_minimal() +
+  ggtitle("Lawler's Law across all NBA games")
+```
+
+
 ```{r}
 thelaw.lac %>% 
   select(-total_games:-law_correct) %>% 
