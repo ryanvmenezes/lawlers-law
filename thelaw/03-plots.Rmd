@@ -7,6 +7,8 @@ output: github_document
 library(tidyverse)
 ```
 
+### Lawler's Law
+
 ```{r}
 thelaw.nba = read_csv('analysis/law-calcs-nba.csv')
 thelaw.lac = read_csv('analysis/law-calcs-lac.csv')
@@ -22,6 +24,19 @@ thelaw.nba %>%
   ggtitle("Lawler's Law across all NBA games")
 ```
 
+
+```{r}
+thelaw.nba %>% 
+  mutate(pct_law_correct_all = law_correct / total_games) %>% 
+  select(-total_games:-law_correct, -pct_law_correct) %>% 
+  gather(-year, key = 'trend', value = 'percent') %>% 
+  ggplot(aes(year, percent, color = trend)) +
+  geom_line() +
+  theme_minimal() +
+  ggtitle("Lawler's Law across all NBA games")
+```
+
+
 ```{r}
 thelaw.lac %>% 
   select(-total_games:-law_correct) %>% 
@@ -30,4 +45,89 @@ thelaw.lac %>%
   geom_line() +
   theme_minimal() +
   ggtitle("Lawler's Law across Clippers games")
+```
+
+```{r}
+p1 = thelaw.nba %>% 
+  ggplot(aes(year, pct_games_invoked * 100)) +
+  geom_line() +
+  theme_minimal() +
+  xlab("Season") +
+  ylab("Percent of games where a team hits 100 points") +
+  ggtitle("As more NBA games cross the 100-point barrier ...")
+p2 = thelaw.nba %>% 
+  ggplot(aes(year, pct_law_correct * 100)) +
+  geom_line() +
+  theme_minimal() +
+  xlab("Season") +
+  ylab("Percent of games Lawler's Law holds true") +
+  ggtitle("... Lawler's Law has become less accurate")
+```
+
+```{r fig.width=8, fig.height=10}
+gridExtra::grid.arrange(p1, p2, ncol = 1)
+```
+
+### Time to 100
+
+```{r}
+timeto100 = read_csv('analysis/time-to-100.csv')
+```
+
+```{r, fig.height=10, fig.width=8}
+timeto100 %>% 
+  ggplot(aes(avgtimeto100, year)) +
+  geom_point() +
+  ggtitle("NBA games are hitting the 100-point mark earlier and earlier") +
+  scale_x_reverse(
+    name = "Time at which the first team hits 100 points",
+    breaks = rev(0:8*60),
+    limits = c(8*60,0),
+    labels = c('8 minutes\nleft in game','7 min.','6 min.','5 min.','4 min.','3 min.','2 min.','1 min.','End of game'),
+    minor_breaks = NULL
+  ) +
+  scale_y_reverse(
+    name = "Season",
+    breaks = 2019:1997,
+    limits = c(2019,1997),
+    labels = 2019:1997,
+    minor_breaks = NULL
+  ) +
+  theme_minimal()
+```
+
+
+### NBA historical scoring
+
+Using data from basketball-reference.com
+
+```{r}
+nba = read_csv('sportsref/nba_stats.csv')
+aba = read_csv('sportsref/aba_stats.csv')
+```
+
+```{r}
+nbapts = nba %>% 
+  select(szn = Season, pts = PTS) %>% 
+  mutate(szn = as.integer(str_sub(szn, end=4)) + 1)
+```
+
+```{r}
+abapts = aba %>% 
+  select(szn = Season, pts = PTS) %>% 
+  mutate(szn = as.integer(str_sub(szn, end=4)) + 1)
+```
+
+```{r}
+nbapts %>% 
+  left_join(abapts, by='szn', suffix = c('_nba','_aba')) %>% 
+  ggplot(aes(szn)) +
+  geom_line(aes(y = pts_nba, color = 'blue')) +
+  geom_line(aes(y = pts_aba, color = 'red')) +
+  scale_color_manual(name = 'League', values = c('blue'='blue','red'='red'), labels = c('NBA','ABA')) +
+  xlab("Season") +
+  ylab("Points per game") +
+  ggtitle("Scoring average by season") +
+  theme_minimal()
+  # geom_hline(yintercept = nbapts %>% filter(szn == 2019) %>% select(pts) %>% first(), color = 'blue')
 ```
