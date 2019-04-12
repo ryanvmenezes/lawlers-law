@@ -15,6 +15,30 @@ thelaw.lac = read_csv('analysis/law-calcs-lac.csv')
 ```
 
 ```{r}
+thelaw.nba
+```
+
+```{r}
+colSums(thelaw.nba %>% select(total_games, law_invoked, law_correct))
+```
+
+How often was Lawler's Law correct in all NBA games?
+
+```{r}
+sum(thelaw.nba$law_correct) / sum(thelaw.nba$law_invoked)
+```
+
+```{r}
+thelaw.lac
+```
+
+How often was Lawler's Law correct in Clippers games?
+
+```{r}
+sum(thelaw.lac$law_correct) / sum(thelaw.lac$law_invoked)
+```
+
+```{r}
 thelaw.nba %>% 
   select(-total_games:-law_correct) %>% 
   gather(-year, key = 'trend', value = 'percent') %>% 
