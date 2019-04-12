@@ -1,22 +1,23 @@
-Lawler's Law: Data pre-processing
+Lawler’s Law: Data pre-processing
 ================
 
 ``` r
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
-    ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.0  
-    ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
-    ## ✔ tidyr   0.8.2       ✔ stringr 1.4.0  
-    ## ✔ readr   1.3.1       ✔ forcats 0.3.0
+    ## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
+    ## ✔ tibble  1.4.2     ✔ dplyr   0.7.6
+    ## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+    ## ✔ readr   1.1.1     ✔ forcats 0.3.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
-Some steps need to be taken before we can ascertain the accuracy of Lawler's Law.
+Some steps need to be taken before we can ascertain the accuracy of
+Lawler’s Law.
 
 ### Who won each game?
 
@@ -45,9 +46,11 @@ for (y in start:end) {
 
 ### Distill the play-by-play
 
-The play-by-play is long and includes virtually every event in the game. Scoring is the only thing that matters here.
+The play-by-play is long and includes virtually every event in the game.
+Scoring is the only thing that matters here.
 
-This is a massive amount of munging that plucks out only scoring plays out and reshapes the data into long format.
+This is a massive amount of munging that plucks out only scoring plays
+out and reshapes the data into long format.
 
 ``` r
 process = function(fpath) {
@@ -108,8 +111,8 @@ for (y in start:end) {
     do(res = process(.$path)) %>% 
     rowwise() %>% 
     do(bind_rows(.)) %>% 
-    arrange(GAME_ID, EVENTNUM)
-  # %>% mutate(TIME = as.character(TIME)) # sometimes write_csv is writing TIME out in scientific notation??
+    arrange(GAME_ID, EVENTNUM) %>%
+    mutate(TIME = as.character(TIME)) # sometimes write_csv is writing TIME out in scientific notation??
   
   write_csv(szn, str_c('processed/pbp-summary-', y, '.csv'))
 }

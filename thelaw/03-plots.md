@@ -1,22 +1,22 @@
-Lawler's Law: Plots
+Lawler’s Law: Plots
 ================
 
 ``` r
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
-    ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.0  
-    ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
-    ## ✔ tidyr   0.8.2       ✔ stringr 1.4.0  
-    ## ✔ readr   1.3.1       ✔ forcats 0.3.0
+    ## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
+    ## ✔ tibble  1.4.2     ✔ dplyr   0.7.6
+    ## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+    ## ✔ readr   1.1.1     ✔ forcats 0.3.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
-### Lawler's Law
+### Lawler’s Law
 
 ``` r
 thelaw.nba = read_csv('analysis/law-calcs-nba.csv')
@@ -24,10 +24,10 @@ thelaw.nba = read_csv('analysis/law-calcs-nba.csv')
 
     ## Parsed with column specification:
     ## cols(
-    ##   year = col_double(),
-    ##   total_games = col_double(),
-    ##   law_invoked = col_double(),
-    ##   law_correct = col_double(),
+    ##   year = col_integer(),
+    ##   total_games = col_integer(),
+    ##   law_invoked = col_integer(),
+    ##   law_correct = col_integer(),
     ##   pct_games_invoked = col_double(),
     ##   pct_law_correct = col_double()
     ## )
@@ -38,13 +38,74 @@ thelaw.lac = read_csv('analysis/law-calcs-lac.csv')
 
     ## Parsed with column specification:
     ## cols(
-    ##   year = col_double(),
-    ##   total_games = col_double(),
-    ##   law_invoked = col_double(),
-    ##   law_correct = col_double(),
+    ##   year = col_integer(),
+    ##   total_games = col_integer(),
+    ##   law_invoked = col_integer(),
+    ##   law_correct = col_integer(),
     ##   pct_games_invoked = col_double(),
     ##   pct_law_correct = col_double()
     ## )
+
+``` r
+thelaw.nba
+```
+
+    ## # A tibble: 23 x 6
+    ##     year total_games law_invoked law_correct pct_games_invok…
+    ##    <int>       <int>       <int>       <int>            <dbl>
+    ##  1  1997        1189         677         640            0.569
+    ##  2  1998        1189         597         578            0.502
+    ##  3  1999         725         266         256            0.367
+    ##  4  2000        1189         723         698            0.608
+    ##  5  2001        1189         585         561            0.492
+    ##  6  2002        1189         602         578            0.506
+    ##  7  2003        1189         580         544            0.488
+    ##  8  2004        1189         493         470            0.415
+    ##  9  2005        1230         706         660            0.574
+    ## 10  2006        1230         686         647            0.558
+    ## # ... with 13 more rows, and 1 more variable: pct_law_correct <dbl>
+
+``` r
+colSums(thelaw.nba %>% select(total_games, law_invoked, law_correct))
+```
+
+    ## total_games law_invoked law_correct 
+    ##       27258       17200       16098
+
+How often was Lawler’s Law correct in all NBA games?
+
+``` r
+sum(thelaw.nba$law_correct) / sum(thelaw.nba$law_invoked)
+```
+
+    ## [1] 0.9359302
+
+``` r
+thelaw.lac
+```
+
+    ## # A tibble: 23 x 6
+    ##     year total_games law_invoked law_correct pct_games_invok…
+    ##    <int>       <int>       <int>       <int>            <dbl>
+    ##  1  1997          82          48          43            0.585
+    ##  2  1998          82          51          48            0.622
+    ##  3  1999          50          28          28            0.56 
+    ##  4  2000          82          53          52            0.646
+    ##  5  2001          82          33          30            0.402
+    ##  6  2002          82          42          41            0.512
+    ##  7  2003          82          43          39            0.524
+    ##  8  2004          82          48          47            0.585
+    ##  9  2005          82          36          33            0.439
+    ## 10  2006          82          43          41            0.524
+    ## # ... with 13 more rows, and 1 more variable: pct_law_correct <dbl>
+
+How often was Lawler’s Law correct in Clippers games?
+
+``` r
+sum(thelaw.lac$law_correct) / sum(thelaw.lac$law_invoked)
+```
+
+    ## [1] 0.9385749
 
 ``` r
 thelaw.nba %>% 
@@ -56,7 +117,20 @@ thelaw.nba %>%
   ggtitle("Lawler's Law across all NBA games")
 ```
 
-![](03-plots_files/figure-markdown_github/unnamed-chunk-3-1.png)
+![](03-plots_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+thelaw.nba %>% 
+  mutate(pct_law_correct_all = law_correct / total_games) %>% 
+  select(-total_games:-law_correct, -pct_law_correct) %>% 
+  gather(-year, key = 'trend', value = 'percent') %>% 
+  ggplot(aes(year, percent, color = trend)) +
+  geom_line() +
+  theme_minimal() +
+  ggtitle("Lawler's Law across all NBA games")
+```
+
+![](03-plots_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 ``` r
 thelaw.lac %>% 
@@ -68,7 +142,7 @@ thelaw.lac %>%
   ggtitle("Lawler's Law across Clippers games")
 ```
 
-![](03-plots_files/figure-markdown_github/unnamed-chunk-4-1.png)
+![](03-plots_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 p1 = thelaw.nba %>% 
@@ -91,7 +165,7 @@ p2 = thelaw.nba %>%
 gridExtra::grid.arrange(p1, p2, ncol = 1)
 ```
 
-![](03-plots_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](03-plots_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ### Time to 100
 
@@ -101,7 +175,7 @@ timeto100 = read_csv('analysis/time-to-100.csv')
 
     ## Parsed with column specification:
     ## cols(
-    ##   year = col_double(),
+    ##   year = col_integer(),
     ##   avgtimeto100 = col_double()
     ## )
 
@@ -127,7 +201,7 @@ timeto100 %>%
   theme_minimal()
 ```
 
-![](03-plots_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](03-plots_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ### NBA historical scoring
 
@@ -140,9 +214,12 @@ nba = read_csv('sportsref/nba_stats.csv')
     ## Parsed with column specification:
     ## cols(
     ##   .default = col_double(),
+    ##   Rk = col_integer(),
     ##   Season = col_character(),
     ##   Lg = col_character(),
-    ##   Ht = col_character()
+    ##   Ht = col_character(),
+    ##   Wt = col_integer(),
+    ##   G = col_integer()
     ## )
 
     ## See spec(...) for full column specifications.
@@ -154,9 +231,12 @@ aba = read_csv('sportsref/aba_stats.csv')
     ## Parsed with column specification:
     ## cols(
     ##   .default = col_double(),
+    ##   Rk = col_integer(),
     ##   Season = col_character(),
     ##   Lg = col_character(),
-    ##   Ht = col_character()
+    ##   Ht = col_character(),
+    ##   Wt = col_integer(),
+    ##   G = col_integer()
     ## )
     ## See spec(...) for full column specifications.
 
@@ -187,7 +267,7 @@ nbapts %>%
 
     ## Warning: Removed 64 rows containing missing values (geom_path).
 
-![](03-plots_files/figure-markdown_github/unnamed-chunk-12-1.png)
+![](03-plots_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
   # geom_hline(yintercept = nbapts %>% filter(szn == 2019) %>% select(pts) %>% first(), color = 'blue')
