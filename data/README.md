@@ -21,7 +21,7 @@ For every game, there is a line for each team. Here's what the top of the 2018-1
 
 ## Play-by-play
 
-**02-get-play-by-play.ipynb** grabs the play-by-play data for every game in every season.
+[02-get-play-by-play.ipynb](/data/02-get-play-by-play.ipynb) grabs the play-by-play data for every game in every season.
 
 The stats.nba.com API is rate-limited, though it remains unclear to me how many requests it takes to hit the limit. This code doesn't hit the API if a file containing that game ID's play-by-play data already exists, to avoid repeated requests.
 

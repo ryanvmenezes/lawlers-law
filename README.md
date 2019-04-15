@@ -13,3 +13,5 @@ The `data` folder contains the process for gathering the data. It's written usin
 ## Part 2: Testing Lawler's Law
 
 The `thelaw` folder contains the code that did the analysis. It's written in R, spread across some R Markdown files. That folder's [README](/thelaw/README.md) has a table of contents.
+
+Questions? Critiques? Get in touch: Email me at ryan.menezes@latimes.com or [@ryanvmenezes](https://twitter.com/ryanvmenezes/) on Twitter.
