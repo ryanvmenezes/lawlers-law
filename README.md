@@ -6,6 +6,10 @@ This oft-repeated phrase by Clippers television broadcaster Ralph Lawler has bee
 
 The code and data contained here outline my process for the analysis behind the story.
 
-## Getting the data
+## Part 1: Getting the data
 
-The `data` subdirectory contains the process for gathering the data. It's written using two python scripts, both contained within jupyter notebooks. The [README](/data/README.md) has more.
+The `data` folder contains the process for gathering the data. It's written using two python scripts, both contained within jupyter notebooks. Check that folder's [README](/data/README.md) for more.
+
+## Part 2: Testing Lawler's Law
+
+The `thelaw` folder contains the code that did the analysis. It's written in R, spread across some R Markdown files. That folder's [README](/thelaw/README.md) has a table of contents.
