@@ -3,7 +3,7 @@ title: "Lawler's Law: Data pre-processing"
 output: github_document
 ---
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 ```
 
@@ -56,7 +56,6 @@ process = function(fpath) {
     filter(
       (!is.na(HOMEDESCRIPTION) | !is.na(VISITORDESCRIPTION))
     ) %>% 
-    filter(PERIOD <= 4) %>% 
     arrange(EVENTNUM) %>% 
     separate(PCTIMESTRING, c("minutes", "seconds", "milliseconds"), sep = ':', remove = FALSE) %>% 
     mutate(

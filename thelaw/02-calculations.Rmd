@@ -3,7 +3,7 @@ title: "Lawler's Law: Calculations"
 output: github_document
 ---
 
-```{r}
+```{r message=FALSE}
 library(tidyverse)
 ```
 
@@ -39,11 +39,12 @@ calculate_law = function(y, teamcode = '') {
   law_invoked = nrow(law)
   law_correct = nrow(law %>% filter(SIDE == WINNER))
   
-  tibble(year = y, total_games = total_games, law_invoked = law_invoked, law_correct = law_correct)
+  tibble(year = y, total_games = total_games,
+         law_invoked = law_invoked, law_correct = law_correct)
 }
 ```
 
-```{r}
+```{r message=FALSE}
 years = tibble(year = 1997:2019)
 
 thelaw.nba = years %>% 
@@ -88,13 +89,14 @@ How much earlier are teams hitting 100 points in a game?
 calculate_timeto100 = function(y) {
   games = suppressMessages(read_csv(str_c('processed/pbp-summary-', y, '.csv')))
   timeto100 = games %>% 
+    filter(PERIOD <= 4) %>% 
     group_by(GAME_ID) %>% 
     do(firstto100(.))
   tibble(year = y, avgtimeto100 = mean(timeto100$TIME))
 }
 ```
 
-```{r}
+```{r message=FALSE}
 avgtimeto100 = years %>% 
   rowwise() %>% 
   do(calculate_timeto100(.$year)) %>% 
@@ -110,9 +112,13 @@ write_csv(avgtimeto100, 'analysis/time-to-100.csv')
 
 Find the success rate of "First team to X wins" for all point values of X reached in a given season.
 
-```{r}
+```{r message=FALSE}
 success_at_x = function(p, tbl) {
-  points = tbl %>% filter(POINTS >= p) %>% group_by(GAME_ID) %>% slice(1)
+  points = tbl %>% 
+    filter(PERIOD <= 4) %>% 
+    filter(POINTS >= p) %>% 
+    group_by(GAME_ID) %>% 
+    slice(1)
   games = nrow(points)
   games_correct = points %>% mutate(correct = (SIDE == WINNER)) %>% pull(correct) %>% sum()
   pct_correct = games_correct / games

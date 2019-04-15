@@ -3,7 +3,7 @@ title: "Lawler's Law: Plots"
 output: github_document
 ---
 
-```{r}
+```{r message=FALSE}
 library(tidyverse)
 ```
 
