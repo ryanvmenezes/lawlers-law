@@ -8,7 +8,7 @@ The code that gathered the data is in two python scripts.
 
 ## Game logs
 
-[01-get-game-logs.ipynb](/01-get-game-logs.ipynb) writes one game log for each season.
+[01-get-game-logs.ipynb](/data/01-get-game-logs.ipynb) writes one game log for each season.
 
 For every game, there is a line for each team. Here's what the top of the 2018-19 log looks like:
 
