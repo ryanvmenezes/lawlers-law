@@ -3,7 +3,9 @@ title: "Lawler's Law: An update"
 output: github_document
 ---
 
-```{r}
+Thanks to [Dean Oliver](https://twitter.com/DeanO_Lytics) for talking to me for this story and giving me some good feedback on this process.
+
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(RcppRoll)
 ```
@@ -12,17 +14,18 @@ library(RcppRoll)
 firsttox = read_csv('analysis/first-to-x-points.csv')
 ```
 
-```{r}
+```{r paged.print=FALSE}
 head(firsttox)
 ```
 
 ### Shift of the scoring curve over time
 
+The darker points are earlier years. The lighter curves being lower shows that the "First team to X points" has been less predictive as we move through this 23-year period.
+
 ```{r}
 firsttox %>% 
   ggplot(aes(point, pct_correct, color = year)) +
-  geom_point(alpha = 0.2) 
-# + stat_smooth(method = 'lm', formula = y ~ x + I(x^2) + I(x^3))
+  geom_point(alpha = 0.2)
 ```
 
 ### Then
@@ -144,7 +147,7 @@ firsttox.15.19 %>%
 
 The new magic number: 114.
 
-This makes sense on a number of levels. It has roughly the same predictive power, but is also not reached in every game. Lawler's Law worked well not because teams routinely hit 100 but because it was an aspirational total. Teams hit 100 in about 75% of games in the first five-year sample. 
+This makes sense on a number of levels. It has roughly the same predictive power, but is also not reached in every game. Lawler's Law worked well not because teams routinely hit 100 but because it was an aspirational total.
 
 How do the two curves compare?
 

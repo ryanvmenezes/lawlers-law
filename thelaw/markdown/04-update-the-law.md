@@ -1,22 +1,11 @@
 Lawler’s Law: An update
 ================
 
+Thanks to [Dean Oliver](https://twitter.com/DeanO_Lytics) for talking to
+me for this story and giving me some good feedback on this process.
+
 ``` r
 library(tidyverse)
-```
-
-    ## ── Attaching packages ───────────────────────────────────────────────────────── tidyverse 1.2.1 ──
-
-    ## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
-    ## ✔ tibble  1.4.2     ✔ dplyr   0.7.6
-    ## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
-    ## ✔ readr   1.1.1     ✔ forcats 0.3.0
-
-    ## ── Conflicts ──────────────────────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-
-``` r
 library(RcppRoll)
 ```
 
@@ -49,17 +38,17 @@ head(firsttox)
 
 ### Shift of the scoring curve over time
 
+The darker points are earlier years. The lighter curves being lower
+shows that the “First team to X points” has been less predictive as we
+move through this 23-year period.
+
 ``` r
 firsttox %>% 
   ggplot(aes(point, pct_correct, color = year)) +
-  geom_point(alpha = 0.2) 
+  geom_point(alpha = 0.2)
 ```
 
 ![](04-update-the-law_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
-
-``` r
-# + stat_smooth(method = 'lm', formula = y ~ x + I(x^2) + I(x^3))
-```
 
 ### Then
 
@@ -231,8 +220,7 @@ The new magic number: 114.
 This makes sense on a number of levels. It has roughly the same
 predictive power, but is also not reached in every game. Lawler’s Law
 worked well not because teams routinely hit 100 but because it was an
-aspirational total. Teams hit 100 in about 75% of games in the first
-five-year sample.
+aspirational total.
 
 How do the two curves compare?
 
