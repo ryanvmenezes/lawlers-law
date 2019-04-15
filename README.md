@@ -8,10 +8,10 @@ The code and data contained here outline my process for the analysis behind the 
 
 ## Part 1: Getting the data
 
-The `data` folder contains the process for gathering the data. It's written using two python scripts, both contained within jupyter notebooks. Check that folder's [README](/data/README.md) for more.
+The `data` folder contains the process for gathering the data. It's written using two python scripts, both contained within jupyter notebooks. Check that folder's [README](/data/) for more.
 
 ## Part 2: Testing Lawler's Law
 
-The `thelaw` folder contains the code that did the analysis. It's written in R, spread across some R Markdown files. That folder's [README](/thelaw/README.md) has a table of contents.
+The `thelaw` folder contains the code that did the analysis. It's written in R, spread across some R Markdown files. That folder's [README](/thelaw/) has a table of contents.
 
-Questions? Critiques? Get in touch: Email me at ryan.menezes@latimes.com or [@ryanvmenezes](https://twitter.com/ryanvmenezes/) on Twitter.
+Questions? Critiques? Get in touch: ryan.menezes@latimes.com or [@ryanvmenezes](https://twitter.com/ryanvmenezes/).
