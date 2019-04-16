@@ -125,7 +125,7 @@ success_at_x = function(p, tbl) {
   tibble(point = p, games = games, correct = games_correct, pct_correct = pct_correct)
 }
 
-# success_at_x(149)
+# success_at_x(149, tbl)
 
 calculate_firsttox = function(y) {
   games = suppressMessages(read_csv(str_c('processed/pbp-summary-', y, '.csv')))

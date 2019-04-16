@@ -56,6 +56,7 @@ process = function(fpath) {
     filter(
       (!is.na(HOMEDESCRIPTION) | !is.na(VISITORDESCRIPTION))
     ) %>% 
+    # filter(PERIOD <= 4) %>% 
     arrange(EVENTNUM) %>% 
     separate(PCTIMESTRING, c("minutes", "seconds", "milliseconds"), sep = ':', remove = FALSE) %>% 
     mutate(

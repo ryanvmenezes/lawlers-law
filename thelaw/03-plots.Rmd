@@ -7,7 +7,7 @@ output: github_document
 library(tidyverse)
 ```
 
-### Lawler's Law
+### Accuracy of Lawler's Law
 
 ```{r}
 thelaw.nba = read_csv('analysis/law-calcs-nba.csv')
@@ -153,5 +153,4 @@ nbapts %>%
   ylab("Points per game") +
   ggtitle("Scoring average by season") +
   theme_minimal()
-  # geom_hline(yintercept = nbapts %>% filter(szn == 2019) %>% select(pts) %>% first(), color = 'blue')
 ```

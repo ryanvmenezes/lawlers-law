@@ -1,8 +1,7 @@
-Lawler’s Law: An update
+Lawler's Law: An update
 ================
 
-Thanks to [Dean Oliver](https://twitter.com/DeanO_Lytics) for talking to
-me for this story and giving me some good feedback on this process.
+Thanks to [Dean Oliver](https://twitter.com/DeanO_Lytics) for talking to me for this story and giving me some good feedback on this process.
 
 ``` r
 library(tidyverse)
@@ -15,32 +14,16 @@ firsttox = read_csv('analysis/first-to-x-points.csv')
 
     ## Parsed with column specification:
     ## cols(
-    ##   year = col_integer(),
-    ##   point = col_integer(),
-    ##   games = col_integer(),
-    ##   correct = col_integer(),
+    ##   year = col_double(),
+    ##   point = col_double(),
+    ##   games = col_double(),
+    ##   correct = col_double(),
     ##   pct_correct = col_double()
     ## )
 
-``` r
-head(firsttox)
-```
-
-    ## # A tibble: 6 x 5
-    ##    year point games correct pct_correct
-    ##   <int> <int> <int>   <int>       <dbl>
-    ## 1  1997     1  1189     647       0.544
-    ## 2  1997     2  1189     641       0.539
-    ## 3  1997     3  1189     660       0.555
-    ## 4  1997     4  1189     674       0.567
-    ## 5  1997     5  1189     682       0.574
-    ## 6  1997     6  1189     696       0.585
-
 ### Shift of the scoring curve over time
 
-The darker points are earlier years. The lighter curves being lower
-shows that the “First team to X points” has been less predictive as we
-move through this 23-year period.
+The darker points are earlier years. The lighter curves being lower shows that the "First team to X points" has been less predictive as we move through this 23-year period.
 
 ``` r
 firsttox %>% 
@@ -48,13 +31,13 @@ firsttox %>%
   geom_point(alpha = 0.2)
 ```
 
-![](04-update-the-law_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+    ## Warning: Removed 19 rows containing missing values (geom_point).
+
+![](04-update-the-law_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
 ### Then
 
-Group 1997 to 2001, a five-year period about 20 years ago. Calculate
-some rolling averages for the percentage chance of a team winning for
-getting to that point total.
+Group 1997 to 2001, a five-year period about 20 years ago. Calculate some rolling averages for the percentage chance of a team winning for getting to that point total.
 
 ``` r
 firsttox %>% 
@@ -65,15 +48,11 @@ firsttox %>%
   geom_line()
 ```
 
-![](04-update-the-law_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](04-update-the-law_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
-This trend is a little jumpy. The real trend should be monotonically
-increasing – for each increment in the point value, the percentage
-chance that point total predicts the winner should not be lower than the
-point total before.
+This trend is a little jumpy. The real trend should be monotonically increasing -- for each increment in the point value, the percentage chance that point total predicts the winner should not be lower than the point total before.
 
-Calculate rolling totals for total games and correct games for a moving
-average.
+Calculate rolling totals for total games and correct games for a moving average.
 
 ``` r
 firsttox.97.01 = firsttox %>% 
@@ -89,7 +68,7 @@ firsttox.97.01 = firsttox %>%
   )
 ```
 
-What’s this trend look like?
+What's this trend look like?
 
 ``` r
 firsttox.97.01 %>% 
@@ -99,10 +78,9 @@ firsttox.97.01 %>%
 
     ## Warning: Removed 4 rows containing missing values (geom_path).
 
-![](04-update-the-law_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](04-update-the-law_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
-Is the percentage at each point increasing (or the same) based on the
-previous value?
+Is the percentage at each point increasing (or the same) based on the previous value?
 
 ``` r
 firsttox.97.01 %>% 
@@ -112,13 +90,12 @@ firsttox.97.01 %>%
 ```
 
     ## # A tibble: 0 x 5
-    ## # ... with 5 variables: point <int>, pct <dbl>, prevpct <dbl>, diff <dbl>,
+    ## # … with 5 variables: point <dbl>, pct <dbl>, prevpct <dbl>, diff <dbl>,
     ## #   diffpositive <lgl>
 
-It is. This is “monotonically increasing.”
+It is. This is "monotonically increasing."
 
-What was the percentage chance of scoring 100 first and winning during
-this period?
+What was the percentage chance of scoring 100 first and winning during this period?
 
 ``` r
 firsttox.97.01 %>% filter(point == 100)
@@ -126,9 +103,9 @@ firsttox.97.01 %>% filter(point == 100)
 
     ## # A tibble: 1 x 8
     ##   point games correct period pct_correct games_roll correct_roll
-    ##   <int> <int>   <int> <chr>        <dbl>      <dbl>        <dbl>
+    ##   <dbl> <dbl>   <dbl> <chr>        <dbl>      <dbl>        <dbl>
     ## 1   100  2848    2733 1997-…       0.960      16197        15483
-    ## # ... with 1 more variable: pct_correct_roll <dbl>
+    ## # … with 1 more variable: pct_correct_roll <dbl>
 
 95.6% across 16,197 games.
 
@@ -158,9 +135,9 @@ firsttox.15.19 %>%
   geom_line()
 ```
 
-    ## Warning: Removed 4 rows containing missing values (geom_path).
+    ## Warning: Removed 19 rows containing missing values (geom_path).
 
-![](04-update-the-law_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](04-update-the-law_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 ``` r
 firsttox.15.19 %>% 
@@ -171,12 +148,12 @@ firsttox.15.19 %>%
 
     ## # A tibble: 1 x 5
     ##   point   pct prevpct      diff diffpositive
-    ##   <int> <dbl>   <dbl>     <dbl> <lgl>       
+    ##   <dbl> <dbl>   <dbl>     <dbl> <lgl>       
     ## 1   137 0.996   0.997 -0.000765 FALSE
 
 Close enough.
 
-What’s the success rate of 100 here?
+What's the success rate of 100 here?
 
 ``` r
 firsttox.15.19 %>% filter(point == 100)
@@ -184,18 +161,15 @@ firsttox.15.19 %>% filter(point == 100)
 
     ## # A tibble: 1 x 8
     ##   point games correct period pct_correct games_roll correct_roll
-    ##   <int> <int>   <int> <chr>        <dbl>      <dbl>        <dbl>
+    ##   <dbl> <dbl>   <dbl> <chr>        <dbl>      <dbl>        <dbl>
     ## 1   100  5085    4644 2015-…       0.913      26740        24177
-    ## # ... with 1 more variable: pct_correct_roll <dbl>
+    ## # … with 1 more variable: pct_correct_roll <dbl>
 
 90% in 26,475 games. Makes sense: many more games and less success.
 
 ### The update
 
-Compare the two monotonically increasing sequences. What was the
-percentage chance of 100 predicting the winner in the first five-year
-period? Take that value and find the first point value now that reaches
-that threshold.
+Compare the two monotonically increasing sequences. What was the percentage chance of 100 predicting the winner in the first five-year period? Take that value and find the first point value now that reaches that threshold.
 
 ``` r
 firsttox.15.19 %>% 
@@ -211,16 +185,13 @@ firsttox.15.19 %>%
 
     ## # A tibble: 1 x 8
     ##   point games correct period pct_correct games_roll correct_roll
-    ##   <int> <int>   <int> <chr>        <dbl>      <dbl>        <dbl>
+    ##   <dbl> <dbl>   <dbl> <chr>        <dbl>      <dbl>        <dbl>
     ## 1   114  2257    2175 2015-…       0.964      13371        12789
-    ## # ... with 1 more variable: pct_correct_roll <dbl>
+    ## # … with 1 more variable: pct_correct_roll <dbl>
 
 The new magic number: 114.
 
-This makes sense on a number of levels. It has roughly the same
-predictive power, but is also not reached in every game. Lawler’s Law
-worked well not because teams routinely hit 100 but because it was an
-aspirational total.
+This makes sense on a number of levels. It has roughly the same predictive power, but is also not reached in every game. Lawler's Law worked well not because teams routinely hit 100 but because it was an aspirational total.
 
 How do the two curves compare?
 
@@ -233,6 +204,6 @@ bind_rows(firsttox.97.01, firsttox.15.19) %>%
   geom_vline(xintercept = 114)
 ```
 
-    ## Warning: Removed 8 rows containing missing values (geom_path).
+    ## Warning: Removed 23 rows containing missing values (geom_path).
 
-![](04-update-the-law_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](04-update-the-law_files/figure-markdown_github/unnamed-chunk-14-1.png)

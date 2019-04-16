@@ -1,37 +1,21 @@
-Lawler’s Law: Calculations
+Lawler's Law: Calculations
 ================
 
 ``` r
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ────────────────────────────────────────────────── tidyverse 1.2.1 ──
-
-    ## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
-    ## ✔ tibble  1.4.2     ✔ dplyr   0.7.6
-    ## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
-    ## ✔ readr   1.1.1     ✔ forcats 0.3.0
-
-    ## ── Conflicts ───────────────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-
 A series of heavy-duty calculations from these data.
 
-### Success rate of Lawler’s Law
+### Success rate of Lawler's Law
 
-The simplest calculations pertaining to Lawler’s Law.
+The simplest calculations pertaining to Lawler's Law.
 
-For the whole league, or a particular team, take the winners and
-play-by-play summary and answer a few questions for each season:
+For the whole league, or a particular team, take the winners and play-by-play summary and answer a few questions for each season:
 
-  - How many games were played?
-  - How many games saw Lawler’s Law invoked (at least one team reached
-    100)?
-  - How many games saw the first team to reach 100 end up winning the
-    game?
-
-<!-- end list -->
+-   How many games were played?
+-   How many games saw Lawler's Law invoked (at least one team reached 100)?
+-   How many games saw the first team to reach 100 end up winning the game?
 
 ``` r
 firstto100 = function(df) { df %>% filter(POINTS >= 100) %>% slice(1) }
@@ -53,7 +37,8 @@ calculate_law = function(y, teamcode = '') {
   law_invoked = nrow(law)
   law_correct = nrow(law %>% filter(SIDE == WINNER))
   
-  tibble(year = y, total_games = total_games, law_invoked = law_invoked, law_correct = law_correct)
+  tibble(year = y, total_games = total_games,
+         law_invoked = law_invoked, law_correct = law_correct)
 }
 ```
 
@@ -101,7 +86,7 @@ thelaw.nba
     ##  8  2004        1189         493         470            0.415
     ##  9  2005        1230         706         660            0.574
     ## 10  2006        1230         686         647            0.558
-    ## # ... with 13 more rows, and 1 more variable: pct_law_correct <dbl>
+    ## # … with 13 more rows, and 1 more variable: pct_law_correct <dbl>
 
 ``` r
 thelaw.lac
@@ -123,7 +108,7 @@ thelaw.lac
     ##  8  2004          82          48          47            0.585
     ##  9  2005          82          36          33            0.439
     ## 10  2006          82          43          41            0.524
-    ## # ... with 13 more rows, and 1 more variable: pct_law_correct <dbl>
+    ## # … with 13 more rows, and 1 more variable: pct_law_correct <dbl>
 
 ``` r
 write_csv(thelaw.nba, 'analysis/law-calcs-nba.csv')
@@ -138,6 +123,7 @@ How much earlier are teams hitting 100 points in a game?
 calculate_timeto100 = function(y) {
   games = suppressMessages(read_csv(str_c('processed/pbp-summary-', y, '.csv')))
   timeto100 = games %>% 
+    filter(PERIOD <= 4) %>% 
     group_by(GAME_ID) %>% 
     do(firstto100(.))
   tibble(year = y, avgtimeto100 = mean(timeto100$TIME))
@@ -158,19 +144,22 @@ write_csv(avgtimeto100, 'analysis/time-to-100.csv')
 
 ### First to X wins
 
-Find the success rate of “First team to X wins” for all point values of
-X reached in a given season.
+Find the success rate of "First team to X wins" for all point values of X reached in a given season.
 
 ``` r
 success_at_x = function(p, tbl) {
-  points = tbl %>% filter(POINTS >= p) %>% group_by(GAME_ID) %>% slice(1)
+  points = tbl %>% 
+    filter(PERIOD <= 4) %>% 
+    filter(POINTS >= p) %>% 
+    group_by(GAME_ID) %>% 
+    slice(1)
   games = nrow(points)
   games_correct = points %>% mutate(correct = (SIDE == WINNER)) %>% pull(correct) %>% sum()
   pct_correct = games_correct / games
   tibble(point = p, games = games, correct = games_correct, pct_correct = pct_correct)
 }
 
-# success_at_x(149)
+# success_at_x(149, tbl)
 
 calculate_firsttox = function(y) {
   games = suppressMessages(read_csv(str_c('processed/pbp-summary-', y, '.csv')))

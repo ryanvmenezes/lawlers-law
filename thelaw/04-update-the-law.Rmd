@@ -14,10 +14,6 @@ library(RcppRoll)
 firsttox = read_csv('analysis/first-to-x-points.csv')
 ```
 
-```{r paged.print=FALSE}
-head(firsttox)
-```
-
 ### Shift of the scoring curve over time
 
 The darker points are earlier years. The lighter curves being lower shows that the "First team to X points" has been less predictive as we move through this 23-year period.
