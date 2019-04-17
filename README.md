@@ -4,6 +4,10 @@
 
 This oft-repeated phrase by Clippers television broadcaster Ralph Lawler has been the subject of my personal fascination for a long time. Now it's the subject of an L.A. Times story.
 
+It ran as the [Column One](https://www.latimes.com/sports/clippers/la-sp-col1-basketball-clippers-lawlers-law-20190416-htmlstory.html), a spot for special feature stories, on Apr. 16, 2019.
+
+I also wrote a little bit about [why my background motivated me](https://www.latimes.com/columnone/la-sp-col1-lawlers-law-basketball-math-20190416-story.html) to do this deep dive.
+
 The code and data contained here outline my process for the analysis behind the story. I used python (version 3.6) and R (3.4).
 
 ## Part 1: Getting the data
