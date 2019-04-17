@@ -2,7 +2,11 @@
 
 This folder contains all NBA game logs (since 1950) and play-by-play data (since 1997).
 
-Thanks to Swar Patel and all those who have contributed to the [nba_api](https://github.com/swar/nba_api) python package. It makes grabbing stats.nba.com data incredibly easy.
+Thanks to Swar Patel and all those who have contributed to the [nba_api](https://github.com/swar/nba_api) python package. It makes grabbing stats.nba.com data incredibly easy. 
+
+There is one hurdle to the data collection: The API for stats.nba.com is rate-limited, meaning you can only make a certain number of requests in a given time period. (I don't know what the number or the length of time is.) To get around this, I made sure to not to make the same call twice in my python code by checking if the output file existed already. A library like [requests_cache](https://github.com/reclosedev/requests-cache) for python can also help with this process.
+
+Still, it took a couple of days to get all 27,000-plus data files. So I posted them here for others to use.
 
 The code that gathered the data is in two python scripts.
 

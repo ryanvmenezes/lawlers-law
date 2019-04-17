@@ -4,7 +4,7 @@
 
 This oft-repeated phrase by Clippers television broadcaster Ralph Lawler has been the subject of my personal fascination for a long time. Now it's the subject of an L.A. Times story.
 
-The code and data contained here outline my process for the analysis behind the story.
+The code and data contained here outline my process for the analysis behind the story. I used python (version 3.6) and R (3.4).
 
 ## Part 1: Getting the data
 
