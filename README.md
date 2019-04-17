@@ -19,3 +19,5 @@ The `data` folder contains the process for gathering the data. It's written usin
 The `thelaw` folder contains the code that did the analysis. It's written in R, spread across some R Markdown files. That folder's [README](/thelaw/) has a table of contents.
 
 Questions? Critiques? Get in touch: ryan.menezes@latimes.com or [@ryanvmenezes](https://twitter.com/ryanvmenezes/).
+
+![](a1.png)

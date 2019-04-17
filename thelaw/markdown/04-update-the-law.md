@@ -28,7 +28,10 @@ The darker points are earlier years. The lighter curves being lower shows that t
 ``` r
 firsttox %>% 
   ggplot(aes(point, pct_correct, color = year)) +
-  geom_point(alpha = 0.2)
+  geom_point(alpha = 0.2) +
+  xlab("The first team to this point total ...") +
+  ylab("... wins the game this percent of the time") +
+  theme_minimal()
 ```
 
     ## Warning: Removed 19 rows containing missing values (geom_point).
@@ -45,7 +48,8 @@ firsttox %>%
   group_by(point) %>% 
   summarise(games = sum(games), correct = sum(correct), pct_correct = correct / games) %>% 
   ggplot(aes(point, pct_correct)) +
-  geom_line()
+  geom_line() +
+  theme_minimal()
 ```
 
 ![](04-update-the-law_files/figure-markdown_github/unnamed-chunk-4-1.png)
@@ -73,7 +77,8 @@ What's this trend look like?
 ``` r
 firsttox.97.01 %>% 
   ggplot(aes(point, pct_correct_roll)) +
-  geom_line()
+  geom_line() +
+  theme_minimal()
 ```
 
     ## Warning: Removed 4 rows containing missing values (geom_path).
@@ -132,7 +137,8 @@ Is this one monotonically increasing too?
 ``` r
 firsttox.15.19 %>% 
   ggplot(aes(point, pct_correct_roll)) +
-  geom_line()
+  geom_line() +
+  theme_minimal()
 ```
 
     ## Warning: Removed 19 rows containing missing values (geom_path).
@@ -151,7 +157,7 @@ firsttox.15.19 %>%
     ##   <dbl> <dbl>   <dbl>     <dbl> <lgl>       
     ## 1   137 0.996   0.997 -0.000765 FALSE
 
-Close enough.
+Just once does this sequence dip. That's close enough.
 
 What's the success rate of 100 here?
 
@@ -201,7 +207,8 @@ bind_rows(firsttox.97.01, firsttox.15.19) %>%
   ggplot(aes(point, pct_correct_roll, color = period)) +
   geom_line() +
   geom_hline(yintercept = 0.9559178) +
-  geom_vline(xintercept = 114)
+  geom_vline(xintercept = 114) +
+  theme_minimal()
 ```
 
     ## Warning: Removed 23 rows containing missing values (geom_path).
